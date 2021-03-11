@@ -1,0 +1,127 @@
+//
+//  courses.template
+//  Good_enough_Enroll_Helper
+//
+//
+// FILE: courses.template
+// IMPLEMENTS: The functions of the courses template class and the
+// linked list toolkit (see courses.h for documentation).
+//
+// NOTE:
+//   Since courses is a template class, this file is included in courses.h.
+//   Therefore, we should not put any using directives in this file.
+//
+// INVARIANT for the courses class:
+//   The data of a courses is stored in data_field, and the link in link_field.
+
+#include <cassert>    // Provides assert
+#include <cstdlib>    // Provides NULL and size_t
+
+template <class Item>
+void list_clear(courses<Item>*& head_ptr)
+// Library facilities used: cstdlib
+{
+    while (head_ptr != NULL)
+        list_head_remove(head_ptr);
+}
+/*
+template <class Item>
+void list_copy(const courses<Item>* source_ptr, courses<Item>*& head_ptr,
+               courses<Item>*& tail_ptr)
+// Library facilities used: cstdlib
+{
+    head_ptr = NULL;
+    tail_ptr = NULL;
+    
+    // Handle the case of the empty list
+    if (source_ptr == NULL)
+        return;
+        
+    // Make the head courses for the newly created list, and put data in it
+    list_head_insert(head_ptr, source_ptr->course_(), source_ptr->course_detail());
+    tail_ptr = head_ptr;
+        
+    // Copy rest of the coursess one at a time, adding at the tail of new list
+    source_ptr = source_ptr->link( );
+    while (source_ptr != NULL)
+    {
+        list_insert(tail_ptr, source_ptr->course_());
+        tail_ptr = tail_ptr->link( );
+        source_ptr = source_ptr->link( );
+    }
+}
+  */  
+template <class Item>
+void list_head_insert(courses<Item>*& head_ptr, const Item& entry, const course_info& entry1)
+{
+    head_ptr = new courses<Item>(entry1, entry, head_ptr);
+}
+    
+template <class Item>
+void list_head_remove(courses<Item>*& head_ptr)
+{
+    courses<Item> *remove_ptr;
+    
+    remove_ptr = head_ptr;
+    head_ptr = head_ptr->link( );
+    delete remove_ptr;
+}
+    
+template <class Item>
+void list_insert(courses<Item>* previous_ptr, const Item& entry, const course_info& entry1)
+{
+    courses<Item> *insert_ptr;
+        
+    insert_ptr = new courses<Item>(entry1, entry, previous_ptr->link( ));
+    previous_ptr->set_link(insert_ptr);
+}
+
+template <class Item>
+std::size_t list_length(const courses<Item>* head_ptr)
+// Library facilities used: cstdlib
+{
+    const courses<Item> *cursor;
+    std::size_t answer;
+        
+    answer = 0;
+    for (cursor = head_ptr; cursor != NULL; cursor = cursor->link( ))
+        ++answer;
+        
+    return answer;
+}
+    
+template <class coursesPtr, class SizeType>
+coursesPtr list_locate(coursesPtr head_ptr, SizeType position)
+// Library facilities used: cassert, cstdlib
+{
+    coursesPtr cursor;
+    SizeType i;
+        
+    assert(0 < position);
+    cursor = head_ptr;
+    for (i = 1; (i < position) && (cursor != NULL); ++i)
+        cursor = cursor->link( );
+    return cursor;
+}
+    
+template <class Item>
+void list_remove(courses<Item>* previous_ptr)
+{
+    courses<Item> *remove_ptr;
+    
+    remove_ptr = previous_ptr->link( );
+    previous_ptr->set_link(remove_ptr->link( ));
+    delete remove_ptr;
+}
+
+template <class coursesPtr, class Item>
+coursesPtr list_search(coursesPtr head_ptr, Item& target)
+// Library facilities used: cstdlib
+{
+    coursesPtr cursor;
+        
+    for (cursor = head_ptr; cursor != NULL; cursor = cursor->link( ))
+        if (target == cursor->course_())
+            return cursor;
+    return NULL;
+}

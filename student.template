@@ -1,0 +1,206 @@
+//  student.template
+//  Good_enough_Enroll_Helper
+//
+//
+// CLASS implemented: student (see student.h for documentation)
+// NOTE:
+//   Since student is a template class, this file is included in courses.h.
+// INVARIANT for the student class:
+//   1. The items in the student are stored on a linked list;
+//   2. The head pointer of the list is stored in the member variable head_ptr;
+//   3. The total units of courses in the list is stored in the member variable
+//       many_courses. (many_courses is not a size of student.)
+
+#include <cassert>  // Provides assert
+#include <cstdlib>  // Provides NULL, rand
+#include "courses.h"  // Provides courses 
+#include <iostream>
+using namespace std;
+
+template <class Item>
+student<Item>::student( )
+// Library facilities used: cstdlib
+{
+	head_ptr = NULL;
+	many_courses = 0;
+}
+
+/*
+template <class Item>
+student<Item>::student(const student<Item>& source)
+// Library facilities used: courses.h
+{
+	courses<Item> *tail_ptr;  // Needed for argument of list_copy
+
+	list_copy(source.head_ptr, head_ptr, tail_ptr);
+	many_courses = source.many_courses;
+}
+*/
+template <class Item>
+student<Item>::~student( )
+// Library facilities used: courses.h
+{
+	list_clear(head_ptr);
+	many_courses = 0;
+}
+
+template <class Item>
+void student<Item>::print(courses<Item> *index)
+{
+    index->display();
+    cout << endl;
+}
+
+template <class Item>
+void student<Item>::print()
+{
+    courses<Item> *cursor;
+    for(cursor = head_ptr; cursor != NULL; cursor = cursor -> link())
+    {
+        cursor->display();
+    }
+    cout << endl << endl;
+}
+
+template <class Item>
+typename student<Item>::size_type student<Item>::count(const Item& target) const
+// Library facilities used: cstdlib, courses.h
+{
+	size_type answer;
+	const courses<Item> *cursor;
+	
+	answer = 0;
+	cursor = list_search(head_ptr, target);
+	while (cursor != NULL)
+	{
+	    // Each time that cursor is not NULL, we have another occurrence of
+	    // target, so we add one to answer, and move cursor to the next
+	    // occurrence of the target.
+	    ++answer;
+	    cursor = cursor->link( );
+	    cursor = list_search(cursor, target);
+    }
+	return answer;
+}
+
+template <class Item>
+bool student<Item>::erase_one(const Item& target)
+// Library facilities used: cstdlib, courses.h
+{
+	courses<Item> *target_ptr;
+
+	target_ptr = list_search(head_ptr, target);
+	if (target_ptr == NULL)
+	    return false; // target isn't in the student, so no work to do
+	target_ptr->set_course( head_ptr->course_() );
+    target_ptr->set_course_detail( head_ptr->course_detail_() );
+
+	list_head_remove(head_ptr);
+	--many_courses;
+	return true;
+}
+
+template <class Item>
+bool student<Item>::select(Item& target, student<Item>& user_info, student<Item>& selected)
+{
+    courses<Item> *cursor;
+    course_info temp;
+    bool alreadyTaken;
+    alreadyTaken = user_info.find_course(target);
+
+    if(!alreadyTaken)
+    {
+        cursor = list_search(head_ptr, target);
+        temp = cursor->course_detail_();
+        selected.insert(target, temp);
+        cout << endl << selected.size() << endl;
+        return true;
+    }
+    return false;
+}
+
+template <class Item>
+bool student<Item>::find_course (const Item& target)
+{
+    courses<Item> *cursor = head_ptr;
+
+    if (head_ptr != NULL)
+    {
+        while (cursor != NULL)
+        {
+            cursor = cursor->link();
+            if (cursor->course_() == target)
+            {
+                return true;
+                break;
+            }
+            else{
+                return false;
+                break;
+            }
+        }
+    }
+    return false;
+}
+
+template <class Item>
+Item student<Item>::grab_course( ) const
+// Library facilities used: cassert, cstdlib, courses.h
+{
+    size_type i(0);
+	const courses<Item> *cursor;
+	assert(size( ) > 0);
+	cursor = list_locate(head_ptr, i);
+	return cursor->course_();
+}
+
+template <class Item>
+void student<Item>::insert(const Item& entry, const course_info& entry1)
+// Library facilities used: courses.h
+{
+	list_head_insert(head_ptr, entry, entry1);
+    many_courses = entry1.class_units() + many_courses;
+}
+
+template <class Item>
+void student<Item>::operator +=(const student<Item>& addend)
+// Library facilities used: courses.h
+{
+	courses<Item> *copy_head_ptr;
+	courses<Item> *copy_tail_ptr;
+	
+	if (addend.many_courses > 0)
+	{
+	    list_copy(addend.head_ptr, copy_head_ptr, copy_tail_ptr);
+	    copy_tail_ptr->set_link( head_ptr ); 
+	    head_ptr = copy_head_ptr;
+	    many_courses += addend.many_courses;
+	}
+}
+    
+template <class Item>
+void student<Item>::operator =(const student<Item>& source)
+// Library facilities used: courses.h
+{
+	courses<Item> *tail_ptr; // Needed for argument to list_copy
+
+	if (this == &source)
+            return;
+
+	list_clear(head_ptr);
+	many_courses = 0;
+
+	list_copy(source.head_ptr, head_ptr, tail_ptr);
+	many_courses = source.many_courses;
+}
+
+template <class Item>
+student<Item> operator +(const student<Item>& b1, const student<Item>& b2)
+{
+	student<Item> answer;
+
+	answer += b1; 
+	answer += b2;
+	return answer;
+}
+
