@@ -20,37 +20,37 @@ void getClassInformation(string ,student<int>&);
 
 int main()
 {
-    student<int> course_book_2016SP;    //  All the course you could register this semester
+    student<int> course_book_2020SP;    //  All the course you could register this semester
     student<int> jungsun;   //  course information that user already took
-    student<int> course_selected_2016SP;    //  course that user selects for this semester
+    student<int> course_selected_2020SP;    //  course that user selects for this semester
     string file, file1;
     file = "good_course_2016FA.txt";    // All the course opened right now
     file1 = "took2016SP.txt";   // course user taken
     int answer(0);
     
     //  Get the course list and information for this semester from the file
-    getClassInformation(file, course_book_2016SP);
+    getClassInformation(file, course_book_2020SP);
     //  Get the course list and information that student already took from the file
     getClassInformation(file1, jungsun);
     
     cout << "       *** welcome to the register program ***" << endl;
     while (answer != -1)
     {
-        cout << " [1] 2016FA  List of Courses" << endl;
-        cout << " [2] 2016FA  Ready for selecting Course? " << endl;
-        cout << " [3] 2016FA  Let's look what you select so far! " << endl;
+        cout << " [1] 2020FA  List of Courses" << endl;
+        cout << " [2] 2020FA  Ready for selecting Course? " << endl;
+        cout << " [3] 2020FA  Let's look what you select so far! " << endl;
         cout << " [4] List of Classes You already Complete! " << endl;
         cout << " [-1] Menu out" << endl;
         cin >> answer;
         switch (answer) {
             case 1:
-                course_book_2016SP.print();
+                course_book_2020SP.print();
                 break;
             case 2:
-                register_class(course_selected_2016SP, jungsun, course_book_2016SP);
+                register_class(course_selected_2020SP, jungsun, course_book_2020SP);
                 break;
             case 3:
-                course_selected_2016SP.print();
+                course_selected_2020SP.print();
                 break;
             case 4:
                 jungsun.print();
